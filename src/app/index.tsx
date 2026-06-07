@@ -20,7 +20,7 @@ export default function App() {
     return (
       <View style={styles.splashContainer}>
         <Image
-          source={{ uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/FEF_logo.svg/512px-FEF_logo.svg.png' }}
+          source={require('../../assets/images/logo-latri.png')}
           style={styles.logo}
           resizeMode="contain"
         />
