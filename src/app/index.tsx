@@ -1,98 +1,113 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, Image, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+export default function App() {
+  // Estado para controlar qué pantalla se muestra
+  const [isSplashVisible, setIsSplashVisible] = useState(true);
 
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
+  useEffect(() => {
+    // Temporizador para ocultar el Splash Screen después de 3.5 segundos
+    const timer = setTimeout(() => {
+      setIsSplashVisible(false);
+    }, 3500);
+
+    // Limpieza del temporizador
+    return () => clearTimeout(timer);
+  }, []);
+
+  // --- COMPONENTE SPLASH SCREEN ---
+  if (isSplashVisible) {
     return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
+      <View style={styles.splashContainer}>
+        <Image
+          source={{ uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/FEF_logo.svg/512px-FEF_logo.svg.png' }}
+          style={styles.logo}
+          resizeMode="contain"
+        />
+        <Text style={styles.splashText}>La Tri</Text>
+        <ActivityIndicator size="large" color="#FFD100" style={{ marginTop: 20 }} />
+      </View>
     );
   }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
+
+  // --- COMPONENTE HOME SCREEN ---
   return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
+    <SafeAreaView style={styles.homeContainer}>
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>Selección Ecuatoriana</Text>
+      </View>
+      
+      <View style={styles.card}>
+        <Text style={styles.cardTitle}>Información del Equipo</Text>
+        <Text style={styles.infoText}>⚽ <Text style={styles.bold}>Apodo:</Text> La Tri, La Tricolor</Text>
+        <Text style={styles.infoText}>🏟️ <Text style={styles.bold}>Estadio principal:</Text> Estadio Rodrigo Paz Delgado</Text>
+        <Text style={styles.infoText}>🏆 <Text style={styles.bold}>Confederación:</Text> CONMEBOL</Text>
+        <Text style={styles.infoText}>🌟 <Text style={styles.bold}>Colores:</Text> Amarillo, Azul y Rojo</Text>
+      </View>
+    </SafeAreaView>
   );
 }
 
-export default function HomeScreen() {
-  return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
-
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
-
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
-          />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
-
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
-  );
-}
-
+// --- ESTILOS ---
 const styles = StyleSheet.create({
-  container: {
+  // Estilos del Splash
+  splashContainer: {
     flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
-  },
-  safeArea: {
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
-  },
-  heroSection: {
+    backgroundColor: '#002244', // Azul oscuro
     alignItems: 'center',
     justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
   },
-  title: {
+  logo: {
+    width: 200,
+    height: 200,
+  },
+  splashText: {
+    color: '#FFD100', // Amarillo
+    fontSize: 32,
+    fontWeight: 'bold',
+    marginTop: 20,
+  },
+  
+  // Estilos del Home
+  homeContainer: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
+  },
+  header: {
+    backgroundColor: '#002244',
+    paddingVertical: 20,
+    alignItems: 'center',
+    paddingTop: 50, // Espacio para el notch del celular
+  },
+  headerTitle: {
+    color: '#FFD100',
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  card: {
+    backgroundColor: '#ffffff',
+    margin: 20,
+    padding: 20,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3, // Sombra para Android
+  },
+  cardTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#002244',
+    marginBottom: 15,
     textAlign: 'center',
   },
-  code: {
-    textTransform: 'uppercase',
+  infoText: {
+    fontSize: 16,
+    marginBottom: 10,
+    color: '#333',
   },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
+  bold: {
+    fontWeight: 'bold',
   },
 });
